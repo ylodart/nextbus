@@ -1,0 +1,14 @@
+[Unit]
+Description=Next Bus Startup Script
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/ylodart/nextbus.py
+WorkingDirectory=/home/ylodart/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=ylodart
+
+[Install]
+WantedBy=multi-user.target
