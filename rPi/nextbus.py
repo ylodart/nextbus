@@ -26,7 +26,7 @@ DATA_PIN = 27
 NUM_BITS = 22
 BIT_DELAY = 0.000010  # 10 µs half-period
 
-CMD_CATHODE_EXERCISE = 0x3FFFFF  # all 22 bits set; triggers cathode exercise on STM8
+CMD_CATHODE_EXERCISE = 0x155555  # alternating bits; can't appear on a floating/pulled-up bus
 
 # Bit mapping (MSB first):
 #   bit 21 = Rp   bit 20 = R9  ...  bit 11 = R0
@@ -84,7 +84,10 @@ def main():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(DATA_PIN, GPIO.OUT, initial=GPIO.LOW)  # DATA before CLK so any CLK glitch samples 0
     GPIO.setup(CLK_PIN,  GPIO.OUT, initial=GPIO.LOW)
-    send_code(0)  # absorb any partial frame the STM8 accumulated during GPIO init
+    time.sleep(0.1)  # let lines settle before clocking anything into the STM8
+    send_code(0)     # flush any partial frame accumulated during GPIO init
+    time.sleep(0.1)
+    send_code(0)     # second flush for safety
 
     last_cathode_ex = time.time()  # first exercise fires after CATHODE_EX_INTERVAL
 

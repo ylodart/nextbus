@@ -24,8 +24,8 @@
 
 #define NUM_OUTPUTS    22
 
-/* All 22 bits set — impossible as a real display state, used as a command. */
-#define CMD_CATHODE_EXERCISE  0x3FFFFFUL
+/* Alternating 10... pattern — can't appear on a floating/pulled-up bus (which would be all 1s). */
+#define CMD_CATHODE_EXERCISE  0x155555UL
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -142,7 +142,7 @@ void main(void) {
     INDICATOR_PORT->CR2 |= INDICATOR_PIN;
     INDICATOR_PORT->ODR &= ~INDICATOR_PIN;
 
-    cathode_exercise();
+    set_outputs(1UL << 21);  /* Rp on during boot; cleared by first received frame */
 
     while (1) {
         bits = receive_bits();
